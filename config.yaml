@@ -1,0 +1,17 @@
+# Default settings for the vulnerability scanner
+
+# You can change the default LLM provider here ('gemini' or 'openai')
+default_llm_provider: gemini
+
+# Specify paths (folders) and files to exclude from all scans.
+exclusions:
+  paths:
+    - ".git"
+    - "repos"
+    - "venv"
+    - "__pycache__"
+  files:
+    - "__init__.py"
+    - ".gitignore"
+    - "config.yaml"
+    

@@ -1,0 +1,95 @@
+{
+    "dependency_vulnerabilities": [],
+    "code_vulnerabilities": [
+        {
+            "file_name": "app.py",
+            "line_number": 10,
+            "cwe_id": "CWE-327",
+            "severity": "High",
+            "description": "Hardcoded secret key.  The application uses a hardcoded secret key, making it vulnerable to attacks if the key is compromised.",
+            "vulnerable_code": "app.secret_key = 'a_very_insecure_hardcoded_secret_key'",
+            "suggested_mitigation": "Use environment variables or a secure key management system to store and retrieve the secret key.  Never hardcode sensitive information directly into the code."
+        },
+        {
+            "file_name": "app.py",
+            "line_number": 30,
+            "cwe_id": "CWE-284",
+            "severity": "High",
+            "description": "Broken Access Control.  The application allows retrieval of user information without proper authorization checks.  Any user can access information about any other user by manipulating the user_id parameter.",
+            "vulnerable_code": "user_id = request.args.get('user_id')\nconn = get_db_connection()\nuser = conn.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()",
+            "suggested_mitigation": "Implement proper authorization checks.  Verify that the requesting user has permission to access the requested user's information.  Use a robust authentication and authorization system."
+        },
+        {
+            "file_name": "app.py",
+            "line_number": 46,
+            "cwe_id": "CWE-321",
+            "severity": "Medium",
+            "description": "Weak Hashing Algorithm. The `store_password_weak_hash` function demonstrates the use of MD5, a weak hashing algorithm. Although not directly used, its presence indicates a potential vulnerability if similar weak hashing is used elsewhere.",
+            "vulnerable_code": "hashed_password = hashlib.md5(password.encode()).hexdigest()",
+            "suggested_mitigation": "Use strong, modern hashing algorithms like bcrypt, Argon2, or scrypt.  These algorithms are designed to be resistant to brute-force and rainbow table attacks."
+        },
+        {
+            "file_name": "app.py",
+            "line_number": 55,
+            "cwe_id": "CWE-89",
+            "severity": "Critical",
+            "description": "SQL Injection. The application is vulnerable to SQL injection because it directly incorporates user-supplied data into an SQL query without proper sanitization or parameterization.",
+            "vulnerable_code": "query = f\"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'\"\nuser = conn.execute(query).fetchone()",
+            "suggested_mitigation": "Use parameterized queries or prepared statements to prevent SQL injection.  Never directly embed user-supplied data into SQL queries."
+        },
+        {
+            "file_name": "app.py",
+            "line_number": 66,
+            "cwe_id": "CWE-306",
+            "severity": "Medium",
+            "description": "Insecure Design: Lack of Rate Limiting. The `forgot_password` endpoint lacks rate limiting, making it vulnerable to brute-force attacks or denial-of-service attacks.",
+            "vulnerable_code": "@app.route('/forgot_password')\ndef forgot_password():\n    email = request.args.get('email')",
+            "suggested_mitigation": "Implement rate limiting to restrict the number of requests from a single IP address or user within a given time frame."
+        },
+        {
+            "file_name": "app.py",
+            "line_number": 90,
+            "cwe_id": "CWE-732",
+            "severity": "High",
+            "description": "Insecure Deserialization. The application deserializes user-supplied data using `pickle.loads`, which is highly vulnerable to arbitrary code execution if the data is maliciously crafted.",
+            "vulnerable_code": "profile_data = pickle.loads(base64.b64decode(profile_data_b64))",
+            "suggested_mitigation": "Avoid using `pickle.loads` with untrusted data.  Use a safer serialization format like JSON, which does not allow arbitrary code execution."
+        },
+        {
+            "file_name": "app.py",
+            "line_number": 100,
+            "cwe_id": "CWE-601",
+            "severity": "Medium",
+            "description": "Missing Security Logging. The application lacks logging for critical security events, such as user deletion. This makes it difficult to detect and respond to security incidents.",
+            "vulnerable_code": "conn.execute('DELETE FROM users WHERE id = ?', (user_id,))",
+            "suggested_mitigation": "Implement comprehensive logging for all security-relevant events, including user actions, authentication attempts, and error messages.  Log the event, timestamp, user, and any relevant details."
+        },
+        {
+            "file_name": "app.py",
+            "line_number": 110,
+            "cwe_id": "CWE-918",
+            "severity": "Critical",
+            "description": "Server-Side Request Forgery (SSRF). The application fetches URLs provided by the user without validation, allowing an attacker to perform SSRF attacks.",
+            "vulnerable_code": "content = requests.get(url, timeout=5).text",
+            "suggested_mitigation": "Validate and sanitize all user-supplied URLs before making requests.  Restrict allowed URLs to a whitelist of trusted domains or internal resources.  Use a dedicated library for making external requests that handles URL validation and sanitization."
+        },
+        {
+            "file_name": "app.py",
+            "line_number": 122,
+            "cwe_id": "CWE-676",
+            "severity": "High",
+            "description": "Use of debug mode in production. Running the application with `debug=True` exposes the application to remote code execution.",
+            "vulnerable_code": "app.run(debug=True)",
+            "suggested_mitigation": "Never run a Flask application with `debug=True` in a production environment.  Use a production-ready WSGI server like Gunicorn or uWSGI."
+        },
+        {
+            "file_name": "app.py",
+            "line_number": 82,
+            "cwe_id": "CWE-285",
+            "severity": "Medium",
+            "description": "Improper Session Management. The logout functionality only clears the client-side cookie, leaving the session active on the server.",
+            "vulnerable_code": "response.set_cookie('session_id', '', expires=0)",
+            "suggested_mitigation": "Invalidate the session on the server-side during logout.  This ensures that the user's session is completely terminated."
+        }
+    ]
+}

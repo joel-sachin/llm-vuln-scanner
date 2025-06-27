@@ -1,0 +1,12 @@
+[project]
+name = "llm-vuln-scanner"
+version = "0.1.0"
+
+[tool.setuptools]
+# This section tells the installer what our packages are.
+packages = ["scanner", "utils"]
+
+[tool.pytest.ini_options]
+# This new section tells pytest to add the project root directory ('.')
+# to the Python path before running tests. This will allow it to find main.py.
+pythonpath = ["."]

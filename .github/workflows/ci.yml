@@ -1,0 +1,41 @@
+# A friendly name for our workflow, which will show up in the GitHub "Actions" tab.
+name: Python Project CI
+
+# This section defines when the workflow will run.
+on:
+  push:
+    branches: [ "main", "master" ] # Runs on every push to the main/master branch
+  pull_request:
+    branches: [ "main", "master" ] # Runs on every pull request targeting the main/master branch
+
+# This section defines the jobs to be executed.
+jobs:
+  build:
+    # The type of machine to run the job on. 'ubuntu-latest' is a standard choice.
+    runs-on: ubuntu-latest
+
+    # A job is a sequence of steps.
+    steps:
+    # Step 1: Check out the repository's code so the workflow can access it.
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    # Step 2: Set up a specific version of Python.
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' # We can specify the version we want to test against
+
+    # Step 3: Install our project's dependencies.
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e . # This is our crucial editable install!
+        
+    # Step 4: Run our test suite with pytest.
+    # Our current tests don't need API keys because we mocked the scanners,
+    # which is a testing best practice!
+    - name: Run tests
+      run: |
+        pytest

@@ -1,0 +1,11 @@
+python-dotenv
+openai
+langchain
+langchain-openai
+GitPython
+requests
+packaging
+langchain-google-genai
+typer[all]
+pytest
+pytest-mock

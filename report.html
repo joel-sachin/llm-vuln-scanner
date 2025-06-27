@@ -1,0 +1,123 @@
+<!DOCTYPE html><html><head><title>Vulnerability Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #333; }
+        h2 { color: #555; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 30px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .severity-CRITICAL { background-color: #ff4d4d; color: white; }
+        .severity-HIGH { background-color: #ff9933; }
+        .severity-MEDIUM { background-color: #ffff66; }
+        .severity-LOW { background-color: #99ff99; }
+        .code { background-color: #eee; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+    </style>
+    </head><body><h1>Vulnerability Scan Report</h1><h2>Dependency Vulnerabilities</h2><p>No known vulnerabilities found in project dependencies.</p><h2>Source Code Vulnerabilities</h2><table><tr><th>Severity</th><th>File</th><th>Line</th><th>CWE</th><th>Description</th><th>Vulnerable Code</th><th>Mitigation</th></tr>
+            <tr>
+                <td class="severity-High">High</td>
+                <td>app.py</td>
+                <td>60</td>
+                <td>CWE-284</td>
+                <td>Improper Access Control: The application allows retrieval of user information without proper authorization.  Any user can access information about any other user by manipulating the user_id parameter.</td>
+                <td><span class="code">user_id = request.args.get(&#x27;user_id&#x27;)
+    conn = get_db_connection()
+    user = conn.execute(&#x27;SELECT * FROM users WHERE id = ?&#x27;, (user_id,)).fetchone()
+    conn.close()
+    if user:</span></td>
+                <td>Implement proper authorization checks.  Verify the user&#x27;s identity and permissions before allowing access to user data.  Use a robust authentication system and restrict access based on roles and permissions.</td>
+            </tr>
+            
+            <tr>
+                <td class="severity-High">High</td>
+                <td>app.py</td>
+                <td>70</td>
+                <td>CWE-327</td>
+                <td>Use of a weak hashing algorithm (MD5) for password storage.  MD5 is cryptographically broken and easily reversible.</td>
+                <td><span class="code">import hashlib
+    hashed_password = hashlib.md5(password.encode()).hexdigest()
+    return hashed_password</span></td>
+                <td>Use a strong, modern, and cryptographically secure hashing algorithm such as bcrypt, Argon2, or scrypt.  Never store passwords in plain text.</td>
+            </tr>
+            
+            <tr>
+                <td class="severity-Critical">Critical</td>
+                <td>app.py</td>
+                <td>16</td>
+                <td>CWE-321</td>
+                <td>Hardcoded Secret Key: The application uses a hardcoded secret key, which is a major security risk. If this key is compromised, an attacker can gain complete control of the application.</td>
+                <td><span class="code">app.secret_key = &#x27;a_very_insecure_hardcoded_secret_key&#x27;</span></td>
+                <td>Store the secret key in a secure environment variable or a dedicated secrets management system. Never hardcode sensitive information directly into the code.</td>
+            </tr>
+            
+            <tr>
+                <td class="severity-Critical">Critical</td>
+                <td>app.py</td>
+                <td>82</td>
+                <td>CWE-89</td>
+                <td>SQL Injection Vulnerability: The application is vulnerable to SQL injection attacks because it directly incorporates user-supplied data into an SQL query without proper sanitization or parameterization.</td>
+                <td><span class="code">query = f&quot;SELECT * FROM users WHERE username = &#x27;{username}&#x27; AND password = &#x27;{password}&#x27;&quot;
+    user = conn.execute(query).fetchone()</span></td>
+                <td>Use parameterized queries or prepared statements to prevent SQL injection.  Never directly embed user-supplied data into SQL queries.</td>
+            </tr>
+            
+            <tr>
+                <td class="severity-Medium">Medium</td>
+                <td>app.py</td>
+                <td>94</td>
+                <td>CWE-306</td>
+                <td>Insecure Design: The application lacks rate limiting on the password reset endpoint, making it vulnerable to brute-force attacks.</td>
+                <td><span class="code"># VULNERABILITY: This endpoint has no rate limiting, allowing an attacker to spam users
+    # with password reset emails or brute-force tokens.</span></td>
+                <td>Implement rate limiting to restrict the number of requests from a single IP address or user within a given time frame. This will mitigate brute-force attacks.</td>
+            </tr>
+            
+            <tr>
+                <td class="severity-Critical">Critical</td>
+                <td>app.py</td>
+                <td>122</td>
+                <td>CWE-200</td>
+                <td>Insecure Deserialization: The application deserializes user-supplied data using the `pickle` module, which is highly vulnerable to remote code execution attacks.</td>
+                <td><span class="code">profile_data = pickle.loads(base64.b64decode(profile_data_b64))</span></td>
+                <td>Avoid using `pickle` for deserializing untrusted data. Use a safer serialization format like JSON, which does not allow arbitrary code execution.</td>
+            </tr>
+            
+            <tr>
+                <td class="severity-Medium">Medium</td>
+                <td>app.py</td>
+                <td>136</td>
+                <td>CWE-601</td>
+                <td>Missing Security Logging: The application lacks logging for critical security events such as user deletion, making it difficult to detect and respond to malicious activity.</td>
+                <td><span class="code"># VULNERABILITY: A critical security event (deleting a user) occurs without any logging.</span></td>
+                <td>Implement comprehensive logging for all critical security events, including user creation, modification, and deletion.  Log relevant information such as timestamps, user IDs, and IP addresses.</td>
+            </tr>
+            
+            <tr>
+                <td class="severity-High">High</td>
+                <td>app.py</td>
+                <td>148</td>
+                <td>CWE-918</td>
+                <td>Server-Side Request Forgery (SSRF): The application allows users to specify arbitrary URLs to fetch, which could lead to internal network attacks or data exfiltration.</td>
+                <td><span class="code">content = requests.get(url, timeout=5).text</span></td>
+                <td>Validate and sanitize all user-supplied URLs before making requests.  Restrict allowed URLs to a whitelist of trusted domains or paths.  Avoid making requests to internal or sensitive resources.</td>
+            </tr>
+            
+            <tr>
+                <td class="severity-Critical">Critical</td>
+                <td>app.py</td>
+                <td>158</td>
+                <td>CWE-319</td>
+                <td>Improper Session Management: The logout functionality only clears the client-side cookie, leaving the session active on the server. This allows an attacker to potentially regain access.</td>
+                <td><span class="code">response.set_cookie(&#x27;session_id&#x27;, &#x27;&#x27;, expires=0)</span></td>
+                <td>Invalidate the session on the server-side during logout.  This ensures that the session is completely terminated and cannot be reused.</td>
+            </tr>
+            
+            <tr>
+                <td class="severity-Critical">Critical</td>
+                <td>app.py</td>
+                <td>164</td>
+                <td>CWE-676</td>
+                <td>Use of debug mode in production. Running the application in debug mode exposes it to remote code execution vulnerabilities.</td>
+                <td><span class="code">app.run(debug=True)</span></td>
+                <td>Never run the application in debug mode in a production environment.  Disable debug mode before deploying to production.</td>
+            </tr>
+            </table></body></html>
